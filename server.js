@@ -12,7 +12,7 @@ app.use("/users",userRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/address",addressRoutes);
 
-
+ 
 
 const PORT=process.env.PORT || 3000;
 app.listen(PORT,(err)=>{
