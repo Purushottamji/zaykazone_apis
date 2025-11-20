@@ -12,10 +12,9 @@ app.use("/users",userRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/address",addressRoutes);
 
- 
-
 const PORT=process.env.PORT || 3000;
 app.listen(PORT,(err)=>{
     if(err) return console.error("server error :"+err.message);
     console.log(`server running on port ${PORT}`);
 });
+
