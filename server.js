@@ -12,19 +12,6 @@ const database = require("./db");
 
 
 
-// vikash
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "_" + file.originalname); // Unique filename
-    }
-});
-
-const upload = multer({ storage: storage });
-
-
 dotenv.config();
 const app = express();
 app.use(express.json());
