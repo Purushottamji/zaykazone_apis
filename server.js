@@ -1,25 +1,39 @@
-const express=require("express");
-const dotenv=require("dotenv");
-const authRoutes=require("./routes/authRoutes");
-const userRoutes=require("./routes/userRoutes");
-const addressRoutes= require("./routes/addRoutes");
-const database=require("./db");
+const express = require("express");
+const dotenv = require("dotenv");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const addressRoutes = require("./routes/addRoutes");
+const database = require("./db");
 const multer = require("multer");
 
+
+// vikash
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "_" + file.originalname); // Unique filename
+    }
+});
+
+const upload = multer({ storage: storage });
+
+
 dotenv.config();
-const app=express();
+const app = express();
 app.use(express.json());
 
-app.use("/auth",authRoutes);
-app.use("/users",userRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 app.use("/uploads", express.static("uploads"));
-app.use("/address",addressRoutes);
+app.use("/address", addressRoutes);
 
-   app.get("/restaurant", async (req, res) => {
+app.get("/restaurant", async (req, res) => {
     try {
         const viewQuery = "SELECT * FROM restaurant_details";
         const [rows] = await database.query(viewQuery);
-        
+
         res.status(200).json({ message: rows });
     } catch (error) {
         res.status(500).json({
@@ -148,11 +162,11 @@ app.delete("/restaurant/:res_id", async (req, res) => {
 });
 
 
-  app.get("/food", async (req, res) => {
+app.get("/food", async (req, res) => {
     try {
         const viewQuery = "SELECT * FROM food_details";
         const [rows] = await database.query(viewQuery);
-        
+
         res.status(200).json({ message: rows });
     } catch (error) {
         res.status(500).json({
@@ -161,58 +175,133 @@ app.delete("/restaurant/:res_id", async (req, res) => {
     }
 });
 
+// app.post("/food", upload.single("image"), async (req, res) => {
+
+//     try {
+//         const {
+//             name,
+//             restaurant_name,
+//             image,
+//             rating,
+//             delivery_type,
+//             time,
+//             description,
+//             sizes,
+//             ingredients,
+//             price,
+//             quantity,
+//             restaurant_id,
+//         } = req.body;
+
+//         const image_url = req.file ? req.file.filename : null;
+
+//         if (
+//             !name || !restaurant_name || !image || !rating || !delivery_type ||
+//             !time || !description || !sizes || !ingredients ||
+//             !price || !quantity || !restaurant_id
+//         ) {
+//             return res.status(400).json({
+//                 message: "All fields are required"
+//             });
+//         }
+
+//         const insertQuery = `
+//             INSERT INTO food_details 
+//             (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients,
+//             price, quantity,restaurant_id)
+//             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`;
+
+//         const [result] = await database.query(insertQuery, [
+//             name,
+//             restaurant_name,
+//             image,
+//             rating,
+//             delivery_type,
+//             time,
+//             description,
+//             sizes,
+//             ingredients,
+//             price,
+//             quantity,
+//             restaurant_id
+//         ]);
+
+//         res.status(201).json({
+//             message: "Food details added successfully",
+//             insertId: result.insertId
+//         });
+
+//     } catch (error) {
+//         res.status(500).json({
+//             message: "Database inserting error: " + error
+//         });
+//     }
+// });
+
+
 app.post("/food", upload.single("image"), async (req, res) => {
     try {
         const {
             name,
-            details,
-            prize,
-            rate,
-            size,
+            restaurant_name,
+            rating,
+            delivery_type,
+            time,
+            description,
+            sizes,
+            ingredients,
+            price,
             quantity,
-            ingridents,
-            delivery_charge,
-            delivery_time,
-            user_id,
-            restaurant_id
+            restaurant_id,
         } = req.body;
 
-        const image_url = req.file ? req.file.filename : null;
+        // multer file
+        const image = req.file ? req.file.filename : null;  // ✔️ file ka naam
 
+        // validation
         if (
-            !name || !image_url || !details || !prize || !rate ||
-            !size || !quantity || !ingridents || !delivery_charge ||
-            !delivery_time || !user_id || !restaurant_id
+            !name ||
+            !restaurant_name ||
+            !rating ||
+            !delivery_type ||
+            !time ||
+            !description ||
+            !sizes ||
+            !ingredients ||
+            !price ||
+            !quantity ||
+            !restaurant_id ||
+            !image
         ) {
             return res.status(400).json({
-                message: "All fields are required"
+                message: "All fields are required including image",
             });
         }
 
         const insertQuery = `
             INSERT INTO food_details 
-            (name, image_url, details, prize, rate, size, quantity, ingridents, delivery_charge,
-            delivery_time, user_id, restaurant_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients, price, quantity, restaurant_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
 
         const [result] = await database.query(insertQuery, [
             name,
-            image_url,
-            details,
-            prize,
-            rate,
-            size,
+            restaurant_name,
+            image,          // ✔️ database me image column
+            rating,
+            delivery_type,
+            time,
+            description,
+            sizes,
+            ingredients,
+            price,
             quantity,
-            ingridents,
-            delivery_charge,
-            delivery_time,
-            user_id,
             restaurant_id
         ]);
 
         res.status(201).json({
             message: "Food details added successfully",
-            insertId: result.insertId
+            insertId: result.insertId,
         });
 
     } catch (error) {
@@ -221,6 +310,12 @@ app.post("/food", upload.single("image"), async (req, res) => {
         });
     }
 });
+
+
+
+
+
+
 app.put("/food/:food_id", upload.single("image"), async (req, res) => {
     try {
         const foodId = req.params.food_id;
@@ -300,15 +395,9 @@ app.put("/food/:food_id", upload.single("image"), async (req, res) => {
     }
 });
 
-
-
-
-
- 
-
-const PORT=process.env.PORT || 3000;
-app.listen(PORT,(err)=>{
-    if(err) return console.error("server error :"+err.message);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, (err) => {
+    if (err) return console.error("server error :" + err.message);
     console.log(`server running on port ${PORT}`);
 
 

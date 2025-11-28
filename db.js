@@ -2,7 +2,7 @@ const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const connection = mysql.createPool({
+const db = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
     password: process.env.DB_PASS || "",
@@ -10,7 +10,7 @@ const connection = mysql.createPool({
 
 });
 
-connection.getConnection()
+db.getConnection()
     .then(connection => {
         console.log("👍 Database connected and pool ready.");
         connection.release();
@@ -19,5 +19,5 @@ connection.getConnection()
         console.error("Database connection error(Please check config/credentials):")
     })
 
-module.exports=connection;
+module.exports=db;
     
