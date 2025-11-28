@@ -154,69 +154,6 @@ app.get("/food", async (req, res) => {
   }
 });
 
-// app.post("/food", upload.single("image"), async (req, res) => {
-
-//     try {
-//         const {
-//             name,
-//             restaurant_name,
-//             image,
-//             rating,
-//             delivery_type,
-//             time,
-//             description,
-//             sizes,
-//             ingredients,
-//             price,
-//             quantity,
-//             restaurant_id,
-//         } = req.body;
-
-//         const image_url = req.file ? req.file.filename : null;
-
-//         if (
-//             !name || !restaurant_name || !image || !rating || !delivery_type ||
-//             !time || !description || !sizes || !ingredients ||
-//             !price || !quantity || !restaurant_id
-//         ) {
-//             return res.status(400).json({
-//                 message: "All fields are required"
-//             });
-//         }
-
-//         const insertQuery = `
-//             INSERT INTO food_details 
-//             (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients,
-//             price, quantity,restaurant_id)
-//             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`;
-
-//         const [result] = await database.query(insertQuery, [
-//             name,
-//             restaurant_name,
-//             image,
-//             rating,
-//             delivery_type,
-//             time,
-//             description,
-//             sizes,
-//             ingredients,
-//             price,
-//             quantity,
-//             restaurant_id
-//         ]);
-
-//         res.status(201).json({
-//             message: "Food details added successfully",
-//             insertId: result.insertId
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({
-//             message: "Database inserting error: " + error
-//         });
-//     }
-// });
-
 
 app.post("/food", upload.single("image"), async (req, res) => {
     try {
@@ -288,38 +225,6 @@ app.post("/food", upload.single("image"), async (req, res) => {
             message: "Database inserting error: " + error
         });
     }
-
-    const insertQuery = `
-      INSERT INTO food_details 
-      (name, image_url, details, prize, rate, size, quantity, ingridents, delivery_charge,
-      delivery_time, user_id, restaurant_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const [result] = await database.query(insertQuery, [
-      name,
-      image_url,
-      details,
-      prize,
-      rate,
-      size,
-      quantity,
-      ingridents,
-      delivery_charge,
-      delivery_time,
-      user_id,
-      restaurant_id,
-    ]);
-
-    res.status(201).json({
-      message: "Food details added successfully",
-      insertId: result.insertId,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Database inserting error: " + error,
-    });
-  }
 });
 
 
