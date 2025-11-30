@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/auth", authRoutes);
 app.use("/phone", phoneOtpRoutes);
 app.use("/users", userRoutes);
-app.use("/uploads", express.static("/var/data/uploads"));
+app.use("/uploads", express.static("/uploads"));
 app.use("/address", addressRoutes);
 app.use("/otp", otpRoutes);
 
@@ -36,7 +36,7 @@ app.get("/restaurant", async (req, res) => {
 });
 
 
-app.post("/restaurant", upload.single("image"), async (req, res) => {
+app.post("/restaurant", upload.single("image_url"), async (req, res) => {
   try {
     const { name, description, food_details, address, rating, delivery_charge, delivery_time } = req.body;
     const image_url = req.file ? req.file.filename : null;
@@ -74,7 +74,7 @@ app.post("/restaurant", upload.single("image"), async (req, res) => {
 });
 
 
-app.put("/restaurant/:res_id", upload.single("image"), async (req, res) => {
+app.put("/restaurant/:res_id", upload.single("image_url"), async (req, res) => {
   try {
     const restaurantId = req.params.res_id;
     const { name, description, food_details, address } = req.body;
