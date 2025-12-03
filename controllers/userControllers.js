@@ -77,8 +77,71 @@ const updateUser = async (req, res) => {
     }
 };
 
+const patchUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { name, email, mobile, password } = req.body;
+
+        const existingUser = await User.findUserById(id);
+        if (!existingUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        if (email) {
+            const emailExists = await User.findUserByEmail(email);
+            if (emailExists && emailExists.id != id) {
+                return res.status(400).json({ message: "Email already taken" });
+            }
+        }
+
+        if (mobile) {
+            const mobileExists = await User.findUserByMobile(mobile);
+            if (mobileExists && mobileExists.id != id) {
+                return res.status(400).json({ message: "Mobile number already taken" });
+            }
+        }
+
+        let hashedPassword = existingUser.password;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        let user_pic = existingUser.user_pic;
+        if (req.file) {
+            user_pic = req.file.filename;
+        }
+
+        const updatedData = {
+            id,
+            name: name || existingUser.name,
+            email: email || existingUser.email,
+            mobile: mobile || existingUser.mobile,
+            password: hashedPassword,
+            user_pic
+        };
+
+        const ok = await User.updateUser(updatedData);
+
+        if (!ok) {
+            return res.status(400).json({ message: "Update failed" });
+        }
+
+        const updatedUser = await User.findUserById(id);
+
+        res.status(200).json({
+            message: "User partially updated successfully",
+            user: updatedUser
+        });
+
+    } catch (err) {
+        console.error("Patch error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
+};
 
 
 
 
-module.exports = { getAllUsers ,updateUser};
+
+
+module.exports = { getAllUsers ,updateUser,patchUser};
