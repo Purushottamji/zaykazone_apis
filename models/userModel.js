@@ -29,7 +29,7 @@ const patchUser= async (data) => {
     const mobile = data.mobile ?? null;
     const user_pic = data.user_pic ?? null;
 
-    const [result] = await database.execute(
+    const [result] = await db.execute(
         `UPDATE user_info SET name=?, email=?, mobile=?, user_pic=? WHERE id=?`,
         [name, email, mobile, user_pic, data.id]
     );
