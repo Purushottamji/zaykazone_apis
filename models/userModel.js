@@ -23,6 +23,14 @@ const updateUser = async ({ id, name, email, mobile, password, user_pic }) => {
     return result.affectedRows > 0;
 };
  
+const patchUser= async (data) => {
+    const [result] = await db.execute(
+        `UPDATE user_info SET name=?, email=?, mobile=?, user_pic=? WHERE id=?`,
+        [data.name, data.email, data.mobile, data.user_pic, data.id]
+    );
+    return result.affectedRows > 0;
+}
+
 
 
 const findUserByEmail = async (email) => {

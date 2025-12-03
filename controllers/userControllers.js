@@ -78,30 +78,54 @@ const updateUser = async (req, res) => {
     }
 };
 
-const patchUser= async (req,res) =>{
-   try {
-    const id = req.params.id;
-    const updates = req.body;
+const patchUser = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { name, email, mobile } = req.body;
 
-    if (req.file) updates.image_url = req.file.filename;
+        const existingUser = await User.findUserById(id);
+        if (!existingUser)
+            return res.status(404).json({ message: "User not found" });
 
-    const fields = Object.keys(updates).map(field => `${field}=?`).join(", ");
-    const values = Object.values(updates);
+        if (email) {
+            const userWithEmail = await User.findUserByEmail(email);
+            if (userWithEmail && userWithEmail.id != id) {
+                return res.status(400).json({ message: "Email already taken" });
+            }
+        }
 
-    const updateQuery = `UPDATE user_info SET ${fields} WHERE id = ?`;
+        if (mobile) {
+            const userWithMobile = await User.findUserByMobile(mobile);
+            if (userWithMobile && userWithMobile.id != id) {
+                return res.status(400).json({ message: "Mobile number already taken" });
+            }
+        }
 
-    const [result] = await database.query(updateQuery, [...values, id]);
+        const updatedData = {
+            id,
+            name: name || existingUser.name,
+            email: email || existingUser.email,
+            mobile: mobile || existingUser.mobile,
+            user_pic: req.file ? req.file.filename : existingUser.user_pic
+        };
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "User not found" });
+        const result = await User.patchUser(updatedData);
+        if (!result) {
+            return res.status(400).json({ message: "Patch update failed" });
+        }
+
+        const updatedUser = await User.findUserById(id);
+
+        res.status(200).json({
+            message: "User partially updated successfully",
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error("Patch error:", error);
+        res.status(500).json({ message: "Server error: " + error });
     }
-
-    res.status(200).json({ message: "User partially updated successfully" });
-
-  } catch (error) {
-    res.status(500).json({ message: "Database patch error: " + error });
-  }
-}
+};
 
 
 module.exports = { getAllUsers ,updateUser, patchUser};

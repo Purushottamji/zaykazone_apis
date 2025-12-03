@@ -137,37 +137,13 @@ app.patch("/restaurant/:res_id", upload.single("image_url"), async (req, res) =>
     res.status(500).json({ message: "Database patch error: " + error });
   }
 });
-// app.patch("/users/update/:id",upload.single("user_pic"),async (req,res) =>{
-//    try {
-//     const id = req.params.id;
-//     const updates = req.body;
 
-//     if (req.file) updates.image_url = req.file.filename;
-
-//     const fields = Object.keys(updates).map(field => `${field}=?`).join(", ");
-//     const values = Object.values(updates);
-
-//     const updateQuery = `UPDATE user_info SET ${fields} WHERE id = ?`;
-
-//     const [result] = await database.query(updateQuery, [...values, id]);
-
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.status(200).json({ message: "User partially updated successfully" });
-
-//   } catch (error) {
-//     res.status(500).json({ message: "Database patch error: " + error });
-//   }
-// }
-// )
 app.delete("/restaurant/:res_id", async (req, res) => {
   try {
-    const restaurantId = req.params.res_id;
+    const res_id = req.params.res_id;
 
     const deleteQuery = "DELETE FROM restaurant_details WHERE res_id = ?";
-    const [result] = await database.query(deleteQuery, [restaurantId]);
+    const [result] = await database.query(deleteQuery, [res_id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Restaurant not found" });
@@ -238,9 +214,9 @@ app.post("/food", upload.single("image"), async (req, res) => {
   }
 });
 
-app.put("/food/:food_id", upload.single("image"), async (req, res) => {
+app.put("/food/:id", upload.single("image"), async (req, res) => {
   try {
-    const foodId = req.params.food_id;
+    const id = req.params.id;
 
     const {
       name,
@@ -262,12 +238,12 @@ app.put("/food/:food_id", upload.single("image"), async (req, res) => {
       UPDATE food_details SET 
       name=?, restaurant_name=?, image=?, rating=?, delivery_type=?, time=?, description=?, sizes=?, 
       ingredients=?, price=?, quantity=?, restaurant_id=? 
-      WHERE food_id = ?
+      WHERE id = ?
     `;
 
     const [result] = await database.query(updateQuery, [
       name, restaurant_name, image, rating, delivery_type, time, description,
-      sizes, ingredients, price, quantity, restaurant_id, foodId
+      sizes, ingredients, price, quantity, restaurant_id, id
     ]);
 
     if (result.affectedRows === 0) return res.status(404).json({ message: "Food not found" });
@@ -279,9 +255,9 @@ app.put("/food/:food_id", upload.single("image"), async (req, res) => {
   }
 });
 
-app.patch("/food/:food_id", upload.single("image"), async (req, res) => {
+app.patch("/food/:id", upload.single("image"), async (req, res) => {
   try {
-    const foodId = req.params.food_id;
+    const id = req.params.id;
     const updates = req.body;
 
     if (req.file) updates.image = req.file.filename;
@@ -289,9 +265,9 @@ app.patch("/food/:food_id", upload.single("image"), async (req, res) => {
     const fields = Object.keys(updates).map(f => `${f}=?`).join(", ");
     const values = Object.values(updates);
 
-    const updateQuery = `UPDATE food_details SET ${fields} WHERE food_id = ?`;
+    const updateQuery = `UPDATE food_details SET ${fields} WHERE id = ?`;
 
-    const [result] = await database.query(updateQuery, [...values, foodId]);
+    const [result] = await database.query(updateQuery, [...values, id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food not found" });
@@ -305,12 +281,12 @@ app.patch("/food/:food_id", upload.single("image"), async (req, res) => {
 });
 
 
-app.delete("/food/:food_id", async (req, res) => {
+app.delete("/food/:id", async (req, res) => {
   try {
-    const foodId = req.params.food_id;
+    const id = req.params.id;
 
-    const deleteQuery = "DELETE FROM food_details WHERE food_id = ?";
-    const [result] = await database.query(deleteQuery, [foodId]);
+    const deleteQuery = "DELETE FROM food_details WHERE id = ?";
+    const [result] = await database.query(deleteQuery, [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food item not found" });
