@@ -90,7 +90,7 @@ const patchUser= async (req,res) =>{
 
     const updateQuery = `UPDATE user_info SET ${fields} WHERE id = ?`;
 
-    const [result] = await database.query(updateQuery, [...values, restaurantId]);
+    const [result] = await database.query(updateQuery, [...values, id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "User not found" });
