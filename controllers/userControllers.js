@@ -87,41 +87,40 @@ const patchUser = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        let updatedData = { id };
+
+        if (name) updatedData.name = name;
+
         if (email) {
             const emailExists = await User.findUserByEmail(email);
             if (emailExists && emailExists.id != id) {
                 return res.status(400).json({ message: "Email already taken" });
             }
+            updatedData.email = email;
         }
 
         if (mobile) {
             const mobileExists = await User.findUserByMobile(mobile);
             if (mobileExists && mobileExists.id != id) {
-                return res.status(400).json({ message: "Mobile number already taken" });
+                return res.status(400).json({ message: "Mobile already taken" });
             }
+            updatedData.mobile = mobile;
         }
 
-        let hashedPassword = existingUser.password;
         if (password) {
-            hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedData.password = hashedPassword;
         }
 
-        let user_pic = existingUser.user_pic;
         if (req.file) {
-            user_pic = req.file.filename;
+            updatedData.user_pic = req.file.filename;
         }
 
-        const updatedData = {
-            id,
-            name: name || existingUser.name,
-            email: email || existingUser.email,
-            mobile: mobile || existingUser.mobile,
-            password: hashedPassword,
-            user_pic
-        };
+        if (Object.keys(updatedData).length === 1) {
+            return res.status(400).json({ message: "No data to update" });
+        }
 
         const ok = await User.updateUser(updatedData);
-
         if (!ok) {
             return res.status(400).json({ message: "Update failed" });
         }
@@ -129,7 +128,8 @@ const patchUser = async (req, res) => {
         const updatedUser = await User.findUserById(id);
 
         res.status(200).json({
-            message: "User partially updated successfully",
+            message: "User updated successfully",
+            updatedFields: updatedData,
             user: updatedUser
         });
 
@@ -138,6 +138,7 @@ const patchUser = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
 
 
 
