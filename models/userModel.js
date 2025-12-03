@@ -57,4 +57,4 @@ const getAllUsers = async () => {
     return rows;
 }
 
-module.exports = { createUser, findUserByEmail, findUserById, getAllUsers, updateUser ,findUserByMobile};
+module.exports = { createUser, findUserByEmail, findUserById, getAllUsers, updateUser ,findUserByMobile,patchUser};
