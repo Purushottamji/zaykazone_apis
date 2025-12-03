@@ -103,16 +103,15 @@ const patchUser = async (req, res) => {
 
         const updatedData = {
             id,
-            name: name || existingUser.name,
-            email: email || existingUser.email,
-            mobile: mobile || existingUser.mobile,
+            name: name ?? existingUser.name,
+            email: email ?? existingUser.email,
+            mobile: mobile ?? existingUser.mobile,
             user_pic: req.file ? req.file.filename : existingUser.user_pic
         };
 
         const result = await User.patchUser(updatedData);
-        if (!result) {
+        if (!result)
             return res.status(400).json({ message: "Patch update failed" });
-        }
 
         const updatedUser = await User.findUserById(id);
 
@@ -126,6 +125,7 @@ const patchUser = async (req, res) => {
         res.status(500).json({ message: "Server error: " + error });
     }
 };
+
 
 
 module.exports = { getAllUsers ,updateUser, patchUser};

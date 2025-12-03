@@ -24,12 +24,19 @@ const updateUser = async ({ id, name, email, mobile, password, user_pic }) => {
 };
  
 const patchUser= async (data) => {
-    const [result] = await db.execute(
-        `UPDATE user_info SET name=?, email=?, mobile=?, user_pic=? WHERE id=?`,
-        [data.name, data.email, data.mobile, data.user_pic, data.id]
+    const name = data.name ?? null;
+    const email = data.email ?? null;
+    const mobile = data.mobile ?? null;
+    const user_pic = data.user_pic ?? null;
+
+    const [result] = await database.execute(
+        `UPDATE users SET name=?, email=?, mobile=?, user_pic=? WHERE id=?`,
+        [name, email, mobile, user_pic, data.id]
     );
+
     return result.affectedRows > 0;
 }
+
 
 
 
