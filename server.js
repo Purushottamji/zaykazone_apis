@@ -9,6 +9,7 @@ const phoneOtpRoutes = require("./routes/phoneOtp");
 const { upload } = require("./middleware/upload");
 
 const database = require("./db");
+const db = require("./db");
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -36,7 +37,6 @@ app.get("/restaurant", async (req, res) => {
   }
 });
 
-
 app.post("/restaurant", upload.single("image_url"), async (req, res) => {
   try {
     const { name, description, food_details, address, rating, delivery_charge, delivery_time } = req.body;
@@ -52,10 +52,10 @@ app.post("/restaurant", upload.single("image_url"), async (req, res) => {
       INSERT INTO restaurant_details 
       (name, image_url, description, food_details, address,rating,delivery_charge,delivery_time) 
       VALUES (?, ?, ?, ?, ?,?,?,?)`;
-     const url="https://zaykazone-project-api.onrender.com/uploads/user_pic/";
+    const url = "https://zaykazone-project-api.onrender.com/uploads/user_pic/";
     const [result] = await database.query(insertQuery, [
       name,
-      url+image_url,
+      url + image_url,
       description,
       food_details,
       address,
@@ -91,10 +91,10 @@ app.put("/restaurant/:res_id", upload.single("image_url"), async (req, res) => {
       name=?, image_url=?, description=?, food_details=?, address=?, rating=?, delivery_charge=?, delivery_time=?
       WHERE res_id = ?
     `;
-     const url="https://zaykazone-project-api.onrender.com/uploads/user_pic/";
+    const url = "https://zaykazone-project-api.onrender.com/uploads/user_pic/";
     const [result] = await database.query(updateQuery, [
       name,
-     url+image_url,
+      url + image_url,
       description,
       food_details,
       address,
@@ -192,7 +192,7 @@ app.post("/food", upload.single("image"), async (req, res) => {
     const image = req.file ? req.file.filename : null;
 
     if (!name || !restaurant_name || !rating || !delivery_type || !time || !description || !sizes ||
-        !ingredients || !price || !quantity || !restaurant_id || !image) {
+      !ingredients || !price || !quantity || !restaurant_id || !image) {
       return res.status(400).json({ message: "All fields are required including image" });
     }
 
