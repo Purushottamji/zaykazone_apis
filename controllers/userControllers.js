@@ -14,6 +14,20 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+const clearAllUser= async (req,res)=>{
+    try{
+        const users=await User.clearUser();
+        res.status(200).json({
+            message:"Truncate user table is done",
+            data:users
+        })
+
+    }catch(err){
+        console.error("Error in clear user:" ,err);
+        res.status(500).json({message:"Server error"});
+    }
+}
+
 const updateUser = async (req, res) => {
     try {
 

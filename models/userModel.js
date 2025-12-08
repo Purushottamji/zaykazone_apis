@@ -7,6 +7,12 @@ const createUser = async ({ name, email, mobile, password, user_pic }) => {
     return { insertId: result.insertId };
 }
 
+const clearUser= async ()=>{
+    const sql=`TRUNCATE TABLE user_info`;
+    const [rows] = await db.execute(sql);
+    return rows;
+}
+
 const updateUser = async ({ id, name, email, mobile, password, user_pic }) => {
     const sql = `
         UPDATE user_info 
@@ -71,4 +77,4 @@ const getAllUsers = async () => {
     return rows;
 }
 
-module.exports = { createUser, findUserByEmail, findUserById, getAllUsers, updateUser ,findUserByMobile,patchUser,deleteUser};
+module.exports = { createUser, findUserByEmail, findUserById, getAllUsers, updateUser ,findUserByMobile,patchUser,deleteUser,clearUser};
