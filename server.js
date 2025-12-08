@@ -32,5 +32,5 @@ app.listen(PORT,(err)=>{
     if(err) return console.error("server error :"+err.message);
     console.log(`server running on port ${PORT}`);
 
-})
+});
 

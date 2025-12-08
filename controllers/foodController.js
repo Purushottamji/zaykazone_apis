@@ -3,7 +3,7 @@ const db=require("../db");
 const getFood=async (req, res) => {
   try {
     const viewQuery = "SELECT * FROM food_details";
-    const [rows] = await database.query(viewQuery);
+    const [rows] = await db.query(viewQuery);
     res.status(200).json({ message: rows });
   } catch (error) {
     res.status(500).json({
@@ -41,7 +41,7 @@ const postFoodDetails=async (req, res) => {
       (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients, price, quantity, restaurant_id)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const [result] = await database.query(insertQuery, [
+    const [result] = await db.query(insertQuery, [
       name, restaurant_name, image, rating, delivery_type, time, description,
       sizes, ingredients, price, quantity, restaurant_id
     ]);
@@ -79,7 +79,7 @@ const putFoodDetails=async (req, res) => {
       ingredients=?, price=?, quantity=?, restaurant_id=? 
       WHERE id = ?
     `;
-    const [result] = await database.query(updateQuery, [
+    const [result] = await db.query(updateQuery, [
       name, restaurant_name, image, rating, delivery_type, time, description,
       sizes, ingredients, price, quantity, restaurant_id, id
     ]);
@@ -105,7 +105,7 @@ const patchFoodDetails=async (req, res) => {
 
     const updateQuery = `UPDATE food_details SET ${fields} WHERE id = ?`;
 
-    const [result] = await database.query(updateQuery, [...values, id]);
+    const [result] = await db.query(updateQuery, [...values, id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food not found" });
@@ -123,7 +123,7 @@ const deleteFoodDetails= async (req, res) => {
     const id = req.params.id;
 
     const deleteQuery = "DELETE FROM food_details WHERE id = ?";
-    const [result] = await database.query(deleteQuery, [id]);
+    const [result] = await db.query(deleteQuery, [id]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food item not found" });
