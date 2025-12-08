@@ -29,7 +29,7 @@ app.use("/payment", paymentRoutes);
 app.use('/place',placeOrderRoutes)
 
 
-const PORT=process.env.PORT || 2000;
+const PORT=process.env.PORT || 3000;
 app.listen(PORT,(err)=>{
     if(err) return console.error("server error :"+err.message);
     console.log(`server running on port ${PORT}`);
