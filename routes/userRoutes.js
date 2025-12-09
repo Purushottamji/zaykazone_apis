@@ -10,4 +10,5 @@ router.patch("/patch/:id", upload.single("user_pic"), patchUser);
 router.delete("/delete/:id", deleteUser);
 
 
+
 module.exports = router;
