@@ -1,12 +1,12 @@
 const mysql = require("mysql2/promise");
-const dotenv = require("dotenv"); 
-dotenv.config();
+// const dotenv = require("dotenv"); 
+// dotenv.config();
 
 const db = mysql.createPool({
-    host: process.env.DB_HOST ||"localhost",
-    user: process.env.DB_USER ||"root",
-    password:process.env.DB_PASS ||"",
-    database:process.env.DB_NAME ||"zayakazone",
+    host: "localhost",//process.env.DB_HOST ||
+    user: "root",//process.env.DB_USER ||
+    password:"",//process.env.DB_PASS ||
+    database:"zayakazone",//process.env.DB_NAME ||
     port: 3307
 });
 
