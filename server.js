@@ -27,69 +27,18 @@ app.use("/image_add", imageRoutes);
 app.use("/food", foodRoutes);
 app.use("/payment", paymentRoutes);
 app.use('/place',placeOrderRoutes);
+const db=require("./db");
 
-app.get("/rating", async (req, res) => {
-  try {
-    const viewQuery = "SELECT * FROM restaurant_details";
-    const [rows] = await database.query(viewQuery);
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(500).json({
-      message: "database fetching error: " + error,
-    });
+app.get("/getTable",async (req,res)=>{
+  try{
+    const sql=`SHOW TABLES`;
+    const [row]=await db.query(sql);
+    res.status(200).json({message:"All Tables",Table:row});
+  }catch(err){
+    console.error("Fetch all teble error:",err);
+    res.status(500).json({message:"Server error"});
   }
-});
-
-
-app.post("/add_data", async (req, res) => {
-  try {
-    const {
-      res_id,
-      product_name,
-      experience,
-      rating
-    } = req.body;
-
-    if (!res_id || !product_name || !experience || !rating) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const insertQuery = `
-      INSERT INTO product_rating 
-      (res_id, product_name, experience, rating)
-      VALUES (?, ?, ?, ?)
-    `;
-
-    const [result] = await db.query(insertQuery, [
-      res_id, product_name, experience, rating
-    ]);
-
-    res.status(201).json({
-      message: "Rating added successfully",
-      data:result.insertId
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: "Database insert error: " + error });
-  }
-});
-
-
-
-app.get("/rating", async (req, res) => {
-  try {
-    const viewQuery = "SELECT * FROM restaurant_details";
-    const [rows] = await database.query(viewQuery);
-
-    res.status(200).json(rows);
-  } catch (error) {
-    res.status(500).json({
-      message: "database fetching error: " + error,
-    });
-  }
-});
-
+})
 
 app.post("/add_data", async (req, res) => {
   try {
