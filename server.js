@@ -7,7 +7,7 @@ const addressRoutes = require("./routes/addRoutes");
 const otpRoutes = require("./routes/otpRoutes");
 const phoneOtpRoutes = require("./routes/phoneOtp");
 const imageRoutes = require("./routes/onlyImageRoutes");
-const foodRoutes= require("./routes/foodRoutes");
+const foodRoutes = require("./routes/foodRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const placeOrderRoutes=require("./routes/placeorderAddressRoutes");
@@ -69,44 +69,58 @@ app.get("/getTablesWithColumns", async (req, res) => {
 });
 
 
-app.post("/add_data", async (req, res) => {
-  try {
-    const {
-      res_id,
-      product_name,
-      experience,
-      rating
-    } = req.body;
+app.get("/rating/:user_id", async (req, res) => {
+    try {
+        const id = req.params.user_id;
+        const viewQuery = "SELECT * FROM product_rating WHERE user_id = ?";
+        const [rows] = await db.query(viewQuery, [id]);
 
-    if (!res_id || !product_name || !experience || !rating) {
-      return res.status(400).json({ message: "All fields are required" });
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({
+            message: "database fetching error: " + error,
+        });
     }
+});
 
-    const insertQuery = `
+app.post("/add_data", async (req, res) => {
+    try {
+        const {
+            user_id,
+            res_id,
+            product_name,
+            experience,
+            rating
+        } = req.body;
+
+        if (!res_id || !product_name || !experience || !rating) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+
+        const insertQuery = `
       INSERT INTO product_rating 
-      (res_id, product_name, experience, rating)
-      VALUES (?, ?, ?, ?)
+      (user_id,res_id, product_name, experience, rating)
+      VALUES (?, ?, ?, ?,?)
     `;
 
-    const [result] = await db.query(insertQuery, [
-      res_id, product_name, experience, rating
-    ]);
+        const [result] = await db.query(insertQuery, [
+            user_id,
+            res_id, product_name, experience, rating
+        ]);
 
-    res.status(201).json({
-      message: "Rating added successfully",
-      data:result.insertId
-    });
+        res.status(201).json({
+            message: "Rating added successfully",
+            data: result.insertId
+        });
 
-  } catch (error) {
-    res.status(500).json({ message: "Database insert error: " + error });
-  }
+    } catch (error) {
+        res.status(500).json({ message: "Database insert error: " + error });
+    }
 });
 
 
-const PORT=process.env.PORT || 3000;
-app.listen(PORT,(err)=>{
-    if(err) return console.error("server error :"+err.message);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, (err) => {
+    if (err) return console.error("server error :" + err.message);
     console.log(`server running on port ${PORT}`);
-
 });
-
