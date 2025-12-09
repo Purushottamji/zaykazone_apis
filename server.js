@@ -28,17 +28,41 @@ app.use("/food", foodRoutes);
 app.use("/payment", paymentRoutes);
 app.use('/place',placeOrderRoutes);
 const db=require("./db");
+app.get("/getTablesWithColumns", async (req, res) => {
+  try {
+    const [tables] = await db.query(`SHOW TABLES`);
 
-app.get("/getTable",async (req,res)=>{
-  try{
-    const sql=`SHOW TABLES`;
-    const [row]=await db.query(sql);
-    res.status(200).json({message:"All Tables",Table:row});
-  }catch(err){
-    console.error("Fetch all teble error:",err);
-    res.status(500).json({message:"Server error"});
+    const key = Object.keys(tables[0])[0];  
+
+    const result = [];
+
+    for (let table of tables) {
+      const tableName = table[key];
+
+      const [columns] = await db.query(`
+        SELECT COLUMN_NAME, DATA_TYPE, COLUMN_KEY, IS_NULLABLE
+        FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+        AND table_name = ?
+      `, [tableName]);
+
+      result.push({
+        tableName,
+        columns
+      });
+    }
+
+    res.status(200).json({
+      message: "Tables with their columns",
+      data: result
+    });
+
+  } catch (err) {
+    console.error("Fetch tables & columns error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-})
+});
+
 
 app.post("/add_data", async (req, res) => {
   try {
