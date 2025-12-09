@@ -2,8 +2,9 @@ const database =require("../db");
 
 const plasceorderAddressGet=async(req,res)=>{
     try{
-        const viewQuery="SELECT * FROM placeorderAddress"
-        const [rows]=await database.query(viewQuery);
+        const id =req.params.user_id;
+        const viewQuery="SELECT * FROM placeorderAddress WHERE user_id=?"
+        const [rows]=await database.query(viewQuery,[id]);
         res.status(200).json(rows)
     }
     catch(error){
