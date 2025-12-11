@@ -12,9 +12,7 @@ const restaurantRoutes = require("./routes/restaurantRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const placeOrderRoutes = require("./routes/placeorderAddressRoutes");
 
-
-const database = require("./db");
-const db = require("./db");
+const db = require("./db");   // ✔ Only this one
 
 dotenv.config();
 const app = express();
@@ -33,6 +31,14 @@ app.use("/food", foodRoutes);
 app.use("/payment", paymentRoutes);
 app.use('/place', placeOrderRoutes);
 
+app.use(express.urlencoded({ extended: true }));
+
+
+ 
+
+
+
+
 
 app.get("/rating/:user_id", async (req, res) => {
     try {
@@ -49,40 +55,64 @@ app.get("/rating/:user_id", async (req, res) => {
 });
 
 
-app.post("/add_data", async (req, res) => {
+
+app.post("/add_data/:user_id", async (req, res) => {
     try {
+        const { user_id } = req.params;
+
         const {
-            user_id,
             res_id,
             product_name,
             experience,
             rating
         } = req.body;
 
-        if (!res_id || !product_name || !experience || !rating) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
         const insertQuery = `
-      INSERT INTO product_rating 
-      (user_id,res_id, product_name, experience, rating)
-      VALUES (?, ?, ?, ?,?)
-    `;
+            INSERT INTO product_rating 
+            (user_id, res_id, product_name, experience, rating)
+            VALUES (?, ?, ?, ?, ?)
+        `;
 
         const [result] = await db.query(insertQuery, [
             user_id,
-            res_id, product_name, experience, rating
+            res_id,
+            product_name,
+            experience,
+            rating
         ]);
 
-        res.status(201).json({
-            message: "Rating added successfully",
-            data: result.insertId
-        });
+        res.status(201).json({ message: "Rating Added", data: result.insertId });
 
     } catch (error) {
-        res.status(500).json({ message: "Database insert error: " + error });
+        res.status(500).json({ message: "Error: " + error });
     }
 });
+
+app.delete("/delete_data/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deleteQuery = `
+            DELETE FROM product_rating 
+            WHERE id = ?
+        `;
+
+        const [result] = await db.query(deleteQuery,[id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Data not found" });
+        }
+
+        res.status(200).json({ message: "Rating Deleted Successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: "Error: " + error });
+    }
+});
+
+
+
+
 
 
 const PORT = process.env.PORT || 3000;
