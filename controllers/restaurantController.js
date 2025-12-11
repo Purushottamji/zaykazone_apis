@@ -58,7 +58,7 @@ const putRestaurant = async (req, res) => {
     const image_url = req.file ? req.file.filename : req.body.image_url;
 
     if (!name || !description || !food_details
-       || !address || !rating || !delivery_charge || !delivery_time) {
+      || !address || !rating || !delivery_charge || !delivery_time) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -137,13 +137,19 @@ const addRestaurantFood = async (req, res) => {
   try {
     const id = req.params.res_id;
 
-    const { name, price, description } = req.body;
+    const { 
+      name, 
+      price, 
+      description, 
+      rating,
+      sizes,
+      ingredients,
+      quantity } = req.body;
 
     if (!name || !price || !description) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-   
     const [rows] = await database.query(
       "SELECT food_details FROM restaurant_details WHERE res_id = ?",
       [id]
@@ -165,11 +171,14 @@ const addRestaurantFood = async (req, res) => {
 
     const url = "https://zaykazone-project-api.onrender.com/uploads/user_pic/";
 
-    // Create new food item
     const newFood = {
-      name,
-      price,
-      description,
+      name, 
+      price, 
+      description, 
+      rating,
+      sizes,
+      ingredients,
+      quantity ,
       image: req.file ? url + req.file.filename : null,
     };
 
@@ -215,7 +224,6 @@ const putRestaurantFood = async (req, res) => {
       });
     }
 
-    // Update DB
     await database.query(
       `UPDATE restaurant_details SET food_details = ? WHERE res_id = ?`,
       [JSON.stringify(food_details), id]
@@ -234,7 +242,15 @@ const putRestaurantFood = async (req, res) => {
 const patchRestaurantFood = async (req, res) => {
   try {
     const id = req.params.res_id;
-    const { food_index, name, price, description } = req.body;
+    const { 
+      food_index, 
+      name, 
+      price, 
+      description, 
+      rating,
+      sizes,
+      ingredients,
+      quantity  } = req.body;
 
     // Find restaurant
     const [rows] = await database.query(
@@ -256,6 +272,10 @@ const patchRestaurantFood = async (req, res) => {
     if (name) foodList[food_index].name = name;
     if (price) foodList[food_index].price = price;
     if (description) foodList[food_index].description = description;
+    if(rating) foodList[food_index].rating = rating;
+    if(sizes) foodList[food_index].sizes = rating;
+    if(ingredients) foodList[food_index].ingredients = ingredients;
+    if(quantity) foodList[food_index].quantity = quantity;
 
     // If user uploads a new food image
     if (req.file) {
