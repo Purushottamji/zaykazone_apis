@@ -29,7 +29,7 @@ app.use("/payment", paymentRoutes);
 
 // GET favourites for a user
 app.get("/favourites/:id", (req, res) => {
-    const id = req.params.id;  // FIXED
+    const id = req.params.id;  
 
     const sql = `
         SELECT f.fevo_id, r.*
@@ -45,7 +45,6 @@ app.get("/favourites/:id", (req, res) => {
         res.json(result);
     });
 });
-
 
 
 // ADD favourite
