@@ -24,7 +24,6 @@ const updateUser = async (req, res) => {
         if (!existingUser)
             return res.status(404).json({ message: "User not found" });
 
-        
         if (email) {
             const userWithEmail = await User.findUserByEmail(email);
             if (userWithEmail && userWithEmail.id != id) {
@@ -32,7 +31,6 @@ const updateUser = async (req, res) => {
             }
         }
 
-        
         if (mobile) {
             const userWithMobile = await User.findUserByMobile(mobile);
             if (userWithMobile && userWithMobile.id != id) {
@@ -148,7 +146,6 @@ const deleteUser=async (req,res)=>{
         res.status(500).json({ message: "Server error: " + err });
     }
 }
-
 
 
 module.exports = { getAllUsers ,updateUser, patchUser,deleteUser};

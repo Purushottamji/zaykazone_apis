@@ -134,6 +134,7 @@ const deleteRestaurant = async (req, res) => {
 };
 
 const addRestaurantFood = async (req, res) => {
+  const size=[34,78,54];
   try {
     const id = req.params.res_id;
 
