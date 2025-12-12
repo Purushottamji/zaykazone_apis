@@ -1,7 +1,6 @@
 const db = require("../db");
 
 
-
 const createAddress= async ({user_id, label_as, full_address, street, pin_code, apartment_no, building_no})=>{
     const sql=`INSERT INTO user_address(user_id, label_as, full_address, street, pin_code, apartment_no, building_no) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const [result]=await db.execute(sql,[user_id, label_as, full_address, street, pin_code, apartment_no, building_no]);

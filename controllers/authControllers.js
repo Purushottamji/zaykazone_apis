@@ -13,6 +13,10 @@ const registerUser = async (req, res) => {
         if (existing)
             return res.status(400).json({ message: "Email already in use" });
 
+        const existingMobile= await User.findUserByMobile(mobile);
+        if(existingMobile)
+        return res.status(400).json({message:"Mobile already in use"});
+
         const hashed = await bcrypt.hash(password, 10);
         const user_pic = req.file ? req.file.filename : null;
 
@@ -71,4 +75,66 @@ const loginUser = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser };
+
+// POST /auth/refresh
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(400).json({ message: "Refresh token required" });
+
+    const [rows] = await db.execute(
+      "SELECT user_id, expires_at FROM refresh_tokens WHERE token = ? LIMIT 1",
+      [refreshToken]
+    );
+
+    if (!rows.length) return res.status(401).json({ message: "Invalid refresh token" });
+
+    const r = rows[0];
+    if (new Date(r.expires_at) < new Date()) {
+      // delete expired
+      await db.execute("DELETE FROM refresh_tokens WHERE token = ?", [refreshToken]);
+      return res.status(401).json({ message: "Refresh token expired" });
+    }
+
+    // issue new access token (and optionally new refresh token)
+    const userId = r.user_id;
+    const [urows] = await db.execute("SELECT id, mobile FROM user_info WHERE id = ? LIMIT 1", [userId]);
+    if (!urows.length) return res.status(404).json({ message: "User not found" });
+
+    const user = urows[0];
+    const newAccessToken = createAccessToken({ id: user.id, mobile: user.mobile });
+
+    return res.json({ token: newAccessToken });
+
+  } catch (err) {
+    console.error("Refresh error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// POST /auth/logout
+const logout = async (req, res) => {
+  try {
+    const auth = req.headers.authorization;
+    const { refreshToken } = req.body; // optional
+
+    if (auth) {
+      const accessToken = auth.split(" ")[1];
+      // blacklist access token
+      await db.execute("INSERT INTO token_blacklist (token) VALUES (?)", [accessToken]);
+    }
+
+    if (refreshToken) {
+      await db.execute("DELETE FROM refresh_tokens WHERE token = ?", [refreshToken]);
+    }
+
+    return res.json({ message: "Logged out" });
+  } catch (err) {
+    console.error("Logout error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+module.exports = { registerUser, loginUser, refreshToken, logout};
