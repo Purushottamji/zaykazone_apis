@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const path = require("path");
+
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const addressRoutes = require("./routes/addRoutes");
@@ -12,8 +12,10 @@ const restaurantRoutes = require("./routes/restaurantRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const placeOrderRoutes=require("./routes/placeorderAddressRoutes");
 const ordersRoutes=require("./routes/orderRoutes");
+const favouritesRoutes = require("./routes/favouritesRoutes");
 dotenv.config();
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,6 +29,7 @@ app.use("/restaurant", restaurantRoutes);
 app.use("/image_add", imageRoutes);
 app.use("/food", foodRoutes);
 app.use("/payment", paymentRoutes);
+app.use("/favourites", favouritesRoutes);
 app.use('/place',placeOrderRoutes);
 app.use('/order',ordersRoutes);
 

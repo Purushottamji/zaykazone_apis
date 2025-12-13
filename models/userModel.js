@@ -13,13 +13,12 @@ const updateUser = async ({ id, name, email, mobile, password, user_pic }) => {
         SET name = ?, email = ?, mobile = ?, password = ?, user_pic = ?
         WHERE id = ?
     `;
-    const url="https://zaykazone-project-api.onrender.com/uploads/user_pic/";
     const [result] = await db.execute(sql, [
         name,
         email,
         mobile,
         password,
-        url+user_pic,
+        user_pic,
         id
     ]);
 
@@ -33,7 +32,7 @@ const patchUser= async (data) => {
     const user_pic = data.user_pic ?? null;
 
     const [result] = await db.execute(
-        `UPDATE user_info SET name=?, email=?, mobile=?, user_pic=? WHERE id=?`,
+        `UPDATE user_info SET name=?, email=?, mobile=?, user_pic=COALESCE(?, user_pic) WHERE id=?`,
         [name, email, mobile, user_pic, data.id]
     );
 
