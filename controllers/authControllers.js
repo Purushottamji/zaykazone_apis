@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const UserToken = require("../models/token");
+const db=require("../db");
 
 
 const registerUser = async (req, res) => {
@@ -145,6 +146,62 @@ const logout = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email)
+    return res.status(400).json({ message: "Email required" });
+
+  const [rows] = await db.query(
+    "SELECT id FROM user_info WHERE email = ?",
+    [email]
+  );
+
+  if (rows.length === 0) {
+    return res.status(404).json({ message: "Email not registered" });
+  }
+
+  const OTP = "9876";
+
+  res.status(200).json({
+    message: "OTP sent successfully",
+    otp: OTP // ⚠️ normally NEVER return OTP
+  });
+};
+
+const verifyOtp = async (req, res) => {
+  const { otp } = req.body;
+
+  if (!otp)
+    return res.status(400).json({ message: "OTP required" });
+
+  if (otp !== "9876") {
+    return res.status(400).json({ message: "Invalid OTP" });
+  }
+
+  res.status(200).json({ message: "OTP verified" });
+};
 
 
-module.exports = { registerUser, loginUser, refreshToken, logout };
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res.status(400).json({ message: "All fields required" });
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  const [result] = await db.query(
+    "UPDATE user_info SET password = ? WHERE email = ?",
+    [hashedPassword, email]
+  );
+
+  if (result.affectedRows === 0) {
+    return res.status(400).json({ message: "Password update failed" });
+  }
+
+  res.status(200).json({ message: "Password updated successfully" });
+};
+
+module.exports = { registerUser, loginUser, refreshToken, logout ,forgotPassword ,verifyOtp, resetPassword};
