@@ -2,7 +2,6 @@ const Favourites = require("../models/favouritesModel");
 
 module.exports = {
 
-  // GET favourites by USER ID
   async getFavourites(req, res) {
     try {
       const { user_id } = req.params;
@@ -16,24 +15,20 @@ module.exports = {
     }
   },
 
-  // ADD favourite
   async addFavourite(req, res) {
     try {
       const { user_id, res_id } = req.body;
 
-      // check user
       const [user] = await Favourites.checkUser(user_id);
       if (!user.length) {
         return res.status(400).json({ error: "User does not exist" });
       }
 
-      // check restaurant
       const [restaurant] = await Favourites.checkRestaurant(res_id);
       if (!restaurant.length) {
         return res.status(400).json({ error: "Restaurant does not exist" });
       }
 
-      // prevent duplicate
       const [exists] = await Favourites.checkFavouriteExists(user_id, res_id);
       if (exists.length) {
         return res.status(409).json({ error: "Already in favourites" });
@@ -52,7 +47,6 @@ module.exports = {
     }
   },
 
-  // DELETE favourite
   async deleteFavourite(req, res) {
     try {
       const { fav_id } = req.params;

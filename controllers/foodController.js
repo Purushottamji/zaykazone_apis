@@ -19,11 +19,7 @@ const postFoodDetails=async (req, res) => {
       name,
       restaurant_name,
       rating,
-      delivery_type,
-      time,
       description,
-      sizes,
-      ingredients,
       price,
       quantity,
       restaurant_id,
@@ -31,19 +27,17 @@ const postFoodDetails=async (req, res) => {
 
     const image = req.file ? req.file.filename : null;
 
-    if (!name || !restaurant_name || !rating || !delivery_type || !time || !description || !sizes ||
-      !ingredients || !price || !quantity || !restaurant_id || !image) {
+    if (!name || !restaurant_name || !rating || !description || !price || !quantity || !restaurant_id || !image) {
       return res.status(400).json({ message: "All fields are required including image" });
     }
 
     const insertQuery = `
       INSERT INTO food_details
-      (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients, price, quantity, restaurant_id)
+      (name, restaurant_name, image, rating, description, price, quantity, restaurant_id)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const [result] = await db.query(insertQuery, [
-      name, restaurant_name, image, rating, delivery_type, time, description,
-      sizes, ingredients, price, quantity, restaurant_id
+      name, restaurant_name, image, rating, description, price, quantity, restaurant_id
     ]);
 
     res.status(201).json({ message: "Food added successfully", insertId: result.insertId });
@@ -61,11 +55,7 @@ const putFoodDetails=async (req, res) => {
       name,
       restaurant_name,
       rating,
-      delivery_type,
-      time,
       description,
-      sizes,
-      ingredients,
       price,
       quantity,
       restaurant_id
@@ -75,13 +65,11 @@ const putFoodDetails=async (req, res) => {
 
     const updateQuery = `
       UPDATE food_details SET 
-      name=?, restaurant_name=?, image=?, rating=?, delivery_type=?, time=?, description=?, sizes=?, 
-      ingredients=?, price=?, quantity=?, restaurant_id=? 
+      name=?, restaurant_name=?, image=?, rating=?, description=?, price=?, quantity=?, restaurant_id=? 
       WHERE id = ?
     `;
     const [result] = await db.query(updateQuery, [
-      name, restaurant_name, image, rating, delivery_type, time, description,
-      sizes, ingredients, price, quantity, restaurant_id, id
+      name, restaurant_name, image, rating, description, price, quantity, restaurant_id, id
     ]);
 
     if (result.affectedRows === 0) return res.status(404).json({ message: "Food not found" });
@@ -137,4 +125,4 @@ const deleteFoodDetails= async (req, res) => {
   }
 };
 
-module.exports={getFood,postFoodDetails,putFoodDetails,patchFoodDetails,deleteFoodDetails};
+module.exports={getFood, postFoodDetails, putFoodDetails, patchFoodDetails, deleteFoodDetails};
