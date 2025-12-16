@@ -34,7 +34,7 @@ const postFoodDetails=async (req, res) => {
     const insertQuery = `
       INSERT INTO food_details
       (name, restaurant_name, image, rating, description, price, quantity, restaurant_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const [result] = await db.query(insertQuery, [
       name, restaurant_name, image, rating, description, price, quantity, restaurant_id
