@@ -36,7 +36,6 @@ app.use('/order',ordersRoutes);
 app.use('/orderhistory',orderhistoryRoutes);
 app.use("/favourites", favouritesRoutes);
 app.use('/place',placeOrderRoutes);
-app.use('/order',ordersRoutes);
 app.use('/foodSize',foodSizeRoutes);
 app.use('/foodIngredients',foodIngredientsRoutes);
 
