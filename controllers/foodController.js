@@ -115,13 +115,16 @@ const patchFoodDetails=async (req, res) => {
     res.status(500).json({ message: "Database patch error: " + error });
   }
 };
-
-const deleteFoodDetails= async (req, res) => {
+const deleteFoodDetails = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const deleteQuery = "DELETE FROM food_details WHERE id = ?";
-    const [result] = await db.query(deleteQuery, [id]);
+    await db.query("DELETE FROM favorites WHERE food_id = ?", [id]);
+
+    const [result] = await db.query(
+      "DELETE FROM food_details WHERE id = ?",
+      [id]
+    );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food item not found" });
@@ -134,5 +137,6 @@ const deleteFoodDetails= async (req, res) => {
     });
   }
 };
+
 
 module.exports={getFood, postFoodDetails, putFoodDetails, patchFoodDetails, deleteFoodDetails, getFoodById};
