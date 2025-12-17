@@ -2,50 +2,58 @@ const db = require("../db");
 
 module.exports = {
 
+  //Get favourites 
   getFavouritesByUser(userId) {
     const sql = `
       SELECT 
-        f.fav_id AS favourite_id,
-        r.res_id,
-        r.name,
-        r.address,
-        r.image_url,
-        r.rating
+        f.fav_id,
+        fd.id AS food_id,
+        fd.name AS food_name,
+        fd.restaurant_name,
+        fd.price,
+        fd.image,
+        fd.rating
       FROM favorites f
-      JOIN restaurant_details r ON f.res_id = r.res_id
+      JOIN food_details fd ON f.food_id = fd.id
       WHERE f.user_id = ?
+      ORDER BY f.created_at DESC
     `;
     return db.query(sql, [userId]);
   },
 
-  checkUser(userId) {
+  //Check food exists
+  checkFood(foodId) {
     return db.query(
-      "SELECT id FROM user_info WHERE id = ?",
-      [userId]
+      "SELECT id FROM food_details WHERE id = ?",
+      [foodId]
     );
   },
 
-  checkRestaurant(resId) {
+  //Already favourite?
+  checkFavouriteExists(userId, foodId) {
     return db.query(
-      "SELECT res_id FROM restaurant_details WHERE res_id = ?",
-      [resId]
+      "SELECT fav_id FROM favorites WHERE user_id = ? AND food_id = ?",
+      [userId, foodId]
     );
   },
 
-  checkFavouriteExists(userId, resId) {
+  //Add favourite
+  addFavourite(userId, foodId) {
     return db.query(
-      "SELECT fav_id FROM favorites WHERE user_id = ? AND res_id = ?",
-      [userId, resId]
+      "INSERT INTO favorites (user_id, food_id) VALUES (?, ?)",
+      [userId, foodId]
     );
   },
 
-  addFavourite(userId, resId) {
+  //Get favourite by id (for delete auth)
+  getFavouriteById(favId) {
     return db.query(
-      "INSERT INTO favorites (user_id, res_id) VALUES (?, ?)",
-      [userId, resId]
+      "SELECT fav_id, user_id FROM favorites WHERE fav_id = ?",
+      [favId]
     );
   },
 
+  //Delete favourite
   deleteFavourite(favId) {
     return db.query(
       "DELETE FROM favorites WHERE fav_id = ?",

@@ -1,7 +1,7 @@
 
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const db = require("../db"); 
+const db = require("../db");
 
 const createAccessToken = (payload) =>
   jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "15m" });

@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const UserToken = require("../models/token");
-const db=require("../db");
+const db = require("../db");
 
 
 const registerUser = async (req, res) => {
@@ -55,7 +55,7 @@ const loginUser = async (req, res) => {
     if (!isMatch)
       return res.status(401).json({ message: "Invalid password" });
 
-  
+
     const accessToken = UserToken.createAccessToken({ id: user.id, email: user.email });
     const refreshToken = UserToken.createRefreshToken();
 
@@ -203,4 +203,4 @@ const resetPassword = async (req, res) => {
   res.status(200).json({ message: "Password updated successfully" });
 };
 
-module.exports = { registerUser, loginUser, refreshToken, logout ,forgotPassword ,verifyOtp, resetPassword};
+module.exports = { registerUser, loginUser, refreshToken, logout, forgotPassword, verifyOtp, resetPassword };

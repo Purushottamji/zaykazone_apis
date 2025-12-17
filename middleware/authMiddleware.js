@@ -4,6 +4,7 @@ const { verifyAccessToken, isTokenBlacklisted } = require("../models/token");
 const authMiddleware = async (req, res, next) => {
   try {
     const auth = req.headers.authorization;
+    console.log("AUTH HEADER:", req.headers.authorization);
     if (!auth) return res.status(401).json({ message: "Unauthorized" });
 
     const token = auth.split(" ")[1];
@@ -23,4 +24,6 @@ const authMiddleware = async (req, res, next) => {
 };
 
 
-module.exports={authMiddleware};
+// module.exports={authMiddleware};
+
+module.exports = authMiddleware;
