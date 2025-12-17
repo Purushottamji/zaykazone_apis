@@ -8,7 +8,7 @@ module.exports = {
       f.fav_id AS favourite_id,
       fd.id AS food_id,
       fd.image,
-      fd.reting,
+      fd.rating,
       fd.name AS food_name,
       fd.price,
       r.res_id,
