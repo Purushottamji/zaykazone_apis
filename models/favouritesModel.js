@@ -16,7 +16,7 @@ module.exports = {
       r.address,
       r.image_url AS restaurant_image,
       r.rating AS restaurant_rating
-    FROM favourites f
+    FROM favorites f
     LEFT JOIN food_details fd ON f.food_id = fd.id
     LEFT JOIN restaurant_details r ON fd.restaurant_id = r.res_id
     WHERE f.user_id = ?
