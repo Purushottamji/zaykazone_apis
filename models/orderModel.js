@@ -21,7 +21,7 @@ const addOrderDetails = async ({
   const insertSql = `
     INSERT INTO orders
     (user_id, res_id, food_name, image, quantity, total_price, p_o_a_id)
-    VALUES (?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   const [result] = await db.execute(insertSql, [
@@ -68,5 +68,23 @@ const addOrderDetails = async ({
   return rows[0];
 };
 
+const deleteOrder = async (order_id) => {
+  const sql = `DELETE FROM orders WHERE order_id = ?`;
+  const [result] = await db.execute(sql, [order_id]);
+  return result;
+};
 
-module.exports={getOrderByUserId, addOrderDetails};
+const cancelOrder = async (order_id) => {
+  const sql = `
+    UPDATE orders 
+    SET status = 'Cancelled' 
+    WHERE order_id = ? AND status != 'Delivered'
+  `;
+
+  const [result] = await db.execute(sql, [order_id]);
+  return result;
+};
+
+
+
+module.exports={getOrderByUserId, addOrderDetails,deleteOrder,cancelOrder};
