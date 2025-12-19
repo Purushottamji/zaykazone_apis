@@ -20,20 +20,14 @@ const addOrderDetails = async ({
 
   const insertSql = `
     INSERT INTO orders
-    (user_id, res_id, food_name, image, quantity, total_price, p_o_a_id)
+    (res_id,food_name,quantity,total_price,image,user_id,p_o_a_id)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   const [result] = await db.execute(insertSql, [
-    user_id,
-    res_id,
-    food_name,
-    quantity,
-    image,
-    total_price,
-    p_o_a_id
+   res_id,food_name,quantity,total_price,image,user_id,p_o_a_id
   ]);
-
+ console.log("image Path:",image);
   const orderId = result.insertId;
 
   const joinSql = `
