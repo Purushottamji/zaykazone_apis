@@ -2,8 +2,9 @@ const db=require("../db");
 
 const getPaymentByUserId=async (req, res) => {
   try {
+    const {user_id} =req.params;
     const viewQuery = "SELECT * FROM payment WHERE user_id = ?";
-    const [rows] = await db.query(viewQuery); 
+    const [rows] = await db.query(viewQuery,[user_id]); 
     res.status(200).json(rows);
   } catch (error) {
     res.status(500).json({ message: "server error: " + error });
