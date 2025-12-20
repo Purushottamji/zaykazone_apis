@@ -40,18 +40,13 @@ app.use("/food", foodRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/foodSize", foodSizeRoutes);
 app.use("/foodIngredients", foodIngredientsRoutes);
+app.use("/place", placeOrderRoutes);
+app.use("/order", ordersRoutes);
+app.use("/orderhistory", orderhistoryRoutes);
 
 // 🔐 JWT Protected Routes
 app.use("/favourites", authMiddleware, favouritesRoutes);
-app.use("/place", authMiddleware, placeOrderRoutes);
-app.use("/order", authMiddleware, ordersRoutes);
-app.use("/orderhistory", authMiddleware, orderhistoryRoutes);
-
 const db = require("./db");
-
-
-
-
 
 app.get("/getTablesWithColumns", async (req, res) => {
     try {
