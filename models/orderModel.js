@@ -13,29 +13,26 @@ const addOrderDetails = async ({
   food_name,
   quantity,
   total_price,
+  image,
   user_id,
   p_o_a_id
 }) => {
 
   const insertSql = `
-    INSERT INTO orders(user_id, res_id, food_name, quantity, total_price, p_o_a_id)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO orders
+    (res_id,food_name,quantity,total_price,image,user_id,p_o_a_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   const [result] = await db.execute(insertSql, [
-    user_id,
-    res_id,
-    food_name,
-    quantity,
-    total_price,
-    p_o_a_id
+   res_id,food_name,quantity,total_price,image,user_id,p_o_a_id
   ]);
-
+ console.log("image Path:",image);
   const orderId = result.insertId;
 
   const joinSql = `
     SELECT 
-      o.order_id AS order_id,
+      o.order_id,
       o.food_name,
       o.quantity,
       o.total_price,
@@ -65,4 +62,23 @@ const addOrderDetails = async ({
   return rows[0];
 };
 
-module.exports={getOrderByUserId, addOrderDetails};
+const deleteOrder = async (order_id) => {
+  const sql = `DELETE FROM orders WHERE order_id = ?`;
+  const [result] = await db.execute(sql, [order_id]);
+  return result;
+};
+
+const cancelOrder = async (order_id) => {
+  const sql = `
+    UPDATE orders 
+    SET status = 'Cancelled' 
+    WHERE order_id = ? AND status != 'Delivered'
+  `;
+
+  const [result] = await db.execute(sql, [order_id]);
+  return result;
+};
+
+
+
+module.exports={getOrderByUserId, addOrderDetails,deleteOrder,cancelOrder};

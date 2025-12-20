@@ -12,18 +12,24 @@ const getFood=async (req, res) => {
   }
 };
 
-
+const getFoodById= async (req,res) =>{
+  try{
+    const {res_id} =req.params;
+    const sql= `SELECT * FROM food_details WHERE restaurant_id = ?`;
+    const [rows] = await db.query(sql,[res_id]);
+    res.status(200).json({ message: rows });
+  }catch(err){
+    console.log("Food geting by id error:",err);
+    res.status(500).json({message:"Server Error"});
+  }
+}
 const postFoodDetails=async (req, res) => {
   try {
     const {
       name,
       restaurant_name,
       rating,
-      delivery_type,
-      time,
       description,
-      sizes,
-      ingredients,
       price,
       quantity,
       restaurant_id,
@@ -31,19 +37,17 @@ const postFoodDetails=async (req, res) => {
 
     const image = req.file ? req.file.filename : null;
 
-    if (!name || !restaurant_name || !rating || !delivery_type || !time || !description || !sizes ||
-      !ingredients || !price || !quantity || !restaurant_id || !image) {
+    if (!name || !restaurant_name || !rating || !description || !price || !quantity || !restaurant_id || !image) {
       return res.status(400).json({ message: "All fields are required including image" });
     }
 
     const insertQuery = `
       INSERT INTO food_details
-      (name, restaurant_name, image, rating, delivery_type, time, description, sizes, ingredients, price, quantity, restaurant_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (name, restaurant_name, image, rating, description, price, quantity, restaurant_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const [result] = await db.query(insertQuery, [
-      name, restaurant_name, image, rating, delivery_type, time, description,
-      sizes, ingredients, price, quantity, restaurant_id
+      name, restaurant_name, image, rating, description, price, quantity, restaurant_id
     ]);
 
     res.status(201).json({ message: "Food added successfully", insertId: result.insertId });
@@ -61,11 +65,7 @@ const putFoodDetails=async (req, res) => {
       name,
       restaurant_name,
       rating,
-      delivery_type,
-      time,
       description,
-      sizes,
-      ingredients,
       price,
       quantity,
       restaurant_id
@@ -75,13 +75,11 @@ const putFoodDetails=async (req, res) => {
 
     const updateQuery = `
       UPDATE food_details SET 
-      name=?, restaurant_name=?, image=?, rating=?, delivery_type=?, time=?, description=?, sizes=?, 
-      ingredients=?, price=?, quantity=?, restaurant_id=? 
+      name=?, restaurant_name=?, image=?, rating=?, description=?, price=?, quantity=?, restaurant_id=? 
       WHERE id = ?
     `;
     const [result] = await db.query(updateQuery, [
-      name, restaurant_name, image, rating, delivery_type, time, description,
-      sizes, ingredients, price, quantity, restaurant_id, id
+      name, restaurant_name, image, rating, description, price, quantity, restaurant_id, id
     ]);
 
     if (result.affectedRows === 0) return res.status(404).json({ message: "Food not found" });
@@ -117,13 +115,16 @@ const patchFoodDetails=async (req, res) => {
     res.status(500).json({ message: "Database patch error: " + error });
   }
 };
-
-const deleteFoodDetails= async (req, res) => {
+const deleteFoodDetails = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const deleteQuery = "DELETE FROM food_details WHERE id = ?";
-    const [result] = await db.query(deleteQuery, [id]);
+    await db.query("DELETE FROM favorites WHERE food_id = ?", [id]);
+
+    const [result] = await db.query(
+      "DELETE FROM food_details WHERE id = ?",
+      [id]
+    );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: "Food item not found" });
@@ -137,4 +138,5 @@ const deleteFoodDetails= async (req, res) => {
   }
 };
 
-module.exports={getFood,postFoodDetails,putFoodDetails,patchFoodDetails,deleteFoodDetails};
+
+module.exports={getFood, postFoodDetails, putFoodDetails, patchFoodDetails, deleteFoodDetails, getFoodById};
