@@ -3,9 +3,6 @@ const db = require("../db");
 const orderHistoryGet=async (req,res)=>{
 
     try{
-         
-    
-
     const user_id=req.params.user_id;
     const [rows]=await db.query("SELECT * FROM orderHistory WHERE user_id=?",[user_id]);
 
@@ -14,15 +11,11 @@ const orderHistoryGet=async (req,res)=>{
         res.status(500).json({message:"database fetching error: "+error});
 
     }
-
-
 }
 
 
 const orderHistoryPost = async (req, res) => {
   try {
-    
-
     const {
       user_id,
       p_o_a_id,
@@ -63,8 +56,6 @@ const orderHistoryPost = async (req, res) => {
     });
   }
 };
-
-
 
 
     module.exports={orderHistoryGet,orderHistoryPost};

@@ -27,7 +27,6 @@ const addOrderDetails = async ({
   const [result] = await db.execute(insertSql, [
    res_id,food_name,quantity,total_price,image,user_id,p_o_a_id
   ]);
- console.log("image Path:",image);
   const orderId = result.insertId;
 
   const joinSql = `

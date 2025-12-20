@@ -11,6 +11,7 @@ const getPaymentByUserId=async (req, res) => {
   }
 }
 
+
 const addPaymentDetails=async (req, res) => {
   try {
     const { user_id, card_holder_name, card_number, exp_date, cvv } = req.body;

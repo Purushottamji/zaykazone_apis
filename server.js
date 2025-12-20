@@ -81,10 +81,10 @@ app.get("/getTablesWithColumns", async (req, res) => {
 });
 
 
-app.get("/rating/:user_id", async (req, res) => {
+app.get("/rating", async (req, res) => {
     try {
         const id = req.params.user_id;
-        const viewQuery = "SELECT * FROM product_rating WHERE user_id = ?";
+        const viewQuery = "SELECT * FROM product_rating";
         const [rows] = await db.query(viewQuery, [id]);
 
         res.status(200).json(rows);
@@ -127,6 +127,48 @@ app.post("/add_data/:user_id", async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error: " + error });
     }
+});
+
+app.put("/update_data/:rating_id", async (req, res) => {
+  try {
+    const { rating_id } = req.params;
+
+    const {
+      res_id,
+      product_name,
+      experience,
+      rating
+    } = req.body;
+
+    const updateQuery = `
+      UPDATE product_rating
+      SET 
+        res_id = ?,
+        product_name = ?,
+        experience = ?,
+        rating = ?
+      WHERE id = ?
+    `;
+
+    const [result] = await db.query(updateQuery, [
+      res_id,
+      product_name,
+      experience,
+      rating,
+      rating_id
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Rating not found" });
+    }
+
+    res.status(200).json({
+      message: "Rating Updated Successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Error: " + error });
+  }
 });
 
 app.delete("/delete_data/:id", async (req, res) => {
