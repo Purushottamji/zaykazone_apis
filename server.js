@@ -105,12 +105,13 @@ app.post("/add_data/:user_id", async (req, res) => {
             res_id,
             product_name,
             experience,
-            rating
+            rating,
+            user_name
         } = req.body;
 
         const insertQuery = `
             INSERT INTO product_rating 
-            (user_id, res_id, product_name, experience, rating)
+            (user_id, res_id, product_name, experience, rating,user_name)
             VALUES (?, ?, ?, ?, ?)
         `;
 
@@ -119,7 +120,8 @@ app.post("/add_data/:user_id", async (req, res) => {
             res_id,
             product_name,
             experience,
-            rating
+            rating,
+            user_name
         ]);
 
         res.status(201).json({ message: "Rating Added", data: result.insertId });
@@ -137,7 +139,7 @@ app.put("/update_data/:rating_id", async (req, res) => {
       res_id,
       product_name,
       experience,
-      rating
+      rating,
     } = req.body;
 
     const updateQuery = `
