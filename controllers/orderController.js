@@ -69,6 +69,16 @@ const deleteOrder = async (req, res) =>{
   }
 }
 
+const updateStatus = async (req, res) => {
+  const { order_id } = req.params;
+  const { status } = req.body;
+
+  await OrderModel.updateOrderStatus(order_id, status);
+
+  res.json({ message: "Status updated", status });
+};
+
+
 const cancelOrder = async (req, res) => {
   try {
     const { order_id } = req.params;
@@ -94,4 +104,4 @@ const cancelOrder = async (req, res) => {
 
 
 
-module.exports={getOrderByUserId, addOrderDetails,cancelOrder,deleteOrder};
+module.exports={getOrderByUserId, addOrderDetails,cancelOrder,updateStatus,deleteOrder};

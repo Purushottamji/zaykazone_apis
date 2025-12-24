@@ -67,6 +67,17 @@ const deleteOrder = async (order_id) => {
   return result;
 };
 
+const updateOrderStatus = async (order_id, status) => {
+  const sql = `
+    UPDATE orders 
+    SET status = ? 
+    WHERE order_id = ?
+  `;
+  const [result] = await db.execute(sql, [status, order_id]);
+  return result;
+};
+
+
 const cancelOrder = async (order_id) => {
   const sql = `
     UPDATE orders
@@ -81,4 +92,4 @@ const cancelOrder = async (order_id) => {
 
 
 
-module.exports = { getOrderByUserId, addOrderDetails, deleteOrder, cancelOrder };
+module.exports = { getOrderByUserId, addOrderDetails, deleteOrder, updateOrderStatus,cancelOrder };
