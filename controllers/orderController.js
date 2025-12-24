@@ -81,9 +81,10 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    res.json({
-      message: "Order cancelled successfully"
-    });
+  res.json({
+  message: "Order cancelled successfully",
+  status: "Cancelled"
+});
 
   } catch (err) {
     console.error(err);

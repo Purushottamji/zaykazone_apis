@@ -1,10 +1,10 @@
-const db=require("../db");
+const db = require("../db");
 
 
-const getOrderByUserId= async (user_id) => {
-    const sql=`SELECT * FROM orders WHERE user_id = ?`;
-    const [row] =await db.execute(sql,[user_id]);
-    return row;
+const getOrderByUserId = async (user_id) => {
+  const sql = `SELECT * FROM orders WHERE user_id = ?`;
+  const [row] = await db.execute(sql, [user_id]);
+  return row;
 }
 
 
@@ -25,7 +25,7 @@ const addOrderDetails = async ({
   `;
 
   const [result] = await db.execute(insertSql, [
-   res_id,food_name,quantity,total_price,image,user_id,p_o_a_id
+    res_id, food_name, quantity, total_price, image, user_id, p_o_a_id
   ]);
   const orderId = result.insertId;
 
@@ -69,9 +69,10 @@ const deleteOrder = async (order_id) => {
 
 const cancelOrder = async (order_id) => {
   const sql = `
-    UPDATE orders 
-    SET status = 'Cancelled' 
-    WHERE order_id = ? AND status != 'Delivered'
+    UPDATE orders
+    SET status = 'Cancelled'
+    WHERE order_id = ?
+    AND status IN ('Pending', 'Placed', 'Preparing')
   `;
 
   const [result] = await db.execute(sql, [order_id]);
@@ -80,4 +81,4 @@ const cancelOrder = async (order_id) => {
 
 
 
-module.exports={getOrderByUserId, addOrderDetails,deleteOrder,cancelOrder};
+module.exports = { getOrderByUserId, addOrderDetails, deleteOrder, cancelOrder };
