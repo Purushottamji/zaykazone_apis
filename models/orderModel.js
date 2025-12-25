@@ -15,17 +15,20 @@ const addOrderDetails = async ({
   total_price,
   image,
   user_id,
-  p_o_a_id
+  p_o_a_id,
+  user_name,
+  payment_status,
+  payment_method
 }) => {
 
   const insertSql = `
     INSERT INTO orders
-    (res_id,food_name,quantity,total_price,image,user_id,p_o_a_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (res_id,food_name,quantity,total_price,image,user_id,p_o_a_id, user_name, payment_status, payment_method)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const [result] = await db.execute(insertSql, [
-    res_id, food_name, quantity, total_price, image, user_id, p_o_a_id
+    res_id, food_name, quantity, total_price, image, user_id, p_o_a_id,user_name, payment_status, payment_method
   ]);
   const orderId = result.insertId;
 

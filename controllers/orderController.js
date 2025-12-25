@@ -22,7 +22,10 @@ const addOrderDetails = async (req, res) => {
       quantity,
       image,
       total_price,
-      p_o_a_id
+      p_o_a_id,
+      user_name,
+      payment_status,
+      payment_method
     } = req.body;
 
     if (
@@ -31,7 +34,8 @@ const addOrderDetails = async (req, res) => {
       !food_name ||
       !quantity ||
       !total_price ||
-      !p_o_a_id
+      !p_o_a_id ||
+      !user_name
     ) {
       return res.status(400).json({
         message: "All fields are required"
