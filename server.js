@@ -198,7 +198,7 @@ app.delete("/delete_data/:id", async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3007;
 app.listen(PORT, (err) => {
     if (err) return console.error("server error :" + err.message);
     console.log(`server running on port ${PORT}`);
